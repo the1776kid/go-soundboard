@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
@@ -46,12 +47,16 @@ func main() {
 		log.Panicf("Error creating oto.NewContext %v", otoErr)
 	}
 	s.ap = s.otoContext.NewPlayer()
-	dir, err := os.ReadDir("audio/")
+	var path string
+	flag.StringVar(&path, "d", "audio/", "dir of 48khz mp3 files")
+	flag.Parse()
+	dir, err := os.ReadDir(path)
 	if err != nil {
 		return
 	}
 	s.content = map[string][]byte{}
 	for i, entry := range dir {
+		// TODO : only open mp3 files
 		fmt.Println(i, entry.Name())
 		playFile, err := os.Open("audio/" + entry.Name())
 		if err != nil {
