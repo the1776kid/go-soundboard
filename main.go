@@ -2,6 +2,9 @@ package main
 
 import (
 	"fmt"
+	"fyne.io/fyne/v2/app"
+	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/widget"
 	"github.com/hajimehoshi/go-mp3"
 	"github.com/hajimehoshi/oto"
 	"io"
@@ -12,12 +15,27 @@ import (
 type soundboard struct {
 	otoContext *oto.Context
 	ap         *oto.Player
+	content    map[string][]byte
 }
 
 func (s *soundboard) play(input []byte) {
 	if _, err := s.ap.Write(input); err != nil {
 		log.Panicf("%v", err)
 	}
+}
+
+func (s *soundboard) gui() {
+	a := app.New()
+	w := a.NewWindow("soundboard")
+	vb := container.NewVBox()
+	for s2, bytes := range s.content {
+		nb := bytes
+		vb.Add(widget.NewButton(s2, func() {
+			s.play(nb)
+		}))
+	}
+	w.SetContent(vb)
+	w.ShowAndRun()
 }
 
 func main() {
@@ -32,7 +50,7 @@ func main() {
 	if err != nil {
 		return
 	}
-	sm := map[int][]byte{}
+	s.content = map[string][]byte{}
 	for i, entry := range dir {
 		fmt.Println(i, entry.Name())
 		playFile, err := os.Open("audio/" + entry.Name())
@@ -43,16 +61,9 @@ func main() {
 		if err != nil {
 			log.Panicf("Error decoding file %s: %v", entry.Name(), err)
 		}
-		if sm[i], err = io.ReadAll(decodedFile); err != nil {
+		if s.content[entry.Name()], err = io.ReadAll(decodedFile); err != nil {
 			log.Panicf("Error reading decodedFile %s: %v", entry.Name(), err)
 		}
 	}
-	for {
-		var t int
-		if _, err := fmt.Scan(&t); err != nil {
-			log.Panicf("%v", err)
-		}
-		// If close player and make new, will it interrupt playback
-		s.play(sm[t])
-	}
+	s.gui()
 }
