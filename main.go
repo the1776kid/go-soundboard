@@ -9,24 +9,25 @@ import (
 	"os"
 )
 
-var (
+type soundboard struct {
 	otoContext *oto.Context
 	ap         *oto.Player
-)
+}
 
-func play(input []byte) {
-	if _, err := ap.Write(input); err != nil {
+func (s *soundboard) play(input []byte) {
+	if _, err := s.ap.Write(input); err != nil {
 		log.Panicf("%v", err)
 	}
 }
 
 func main() {
+	s := soundboard{}
 	var otoErr error
-	otoContext, otoErr = oto.NewContext(48000, 2, 2, 1000)
+	s.otoContext, otoErr = oto.NewContext(48000, 2, 2, 256)
 	if otoErr != nil {
 		log.Panicf("Error creating oto.NewContext %v", otoErr)
 	}
-	ap = otoContext.NewPlayer()
+	s.ap = s.otoContext.NewPlayer()
 	dir, err := os.ReadDir("audio/")
 	if err != nil {
 		return
@@ -52,6 +53,6 @@ func main() {
 			log.Panicf("%v", err)
 		}
 		// If close player and make new, will it interrupt playback
-		play(sm[t])
+		s.play(sm[t])
 	}
 }
