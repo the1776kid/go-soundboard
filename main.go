@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
@@ -11,6 +10,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"strings"
 )
 
 type soundboard struct {
@@ -55,18 +55,20 @@ func main() {
 		return
 	}
 	s.content = map[string][]byte{}
-	for i, entry := range dir {
-		// TODO : only open mp3 files
-		fmt.Println(i, entry.Name())
-		playFile, err := os.Open("audio/" + entry.Name())
+	for _, entry := range dir {
+		en := entry.Name()
+		if en[len(en)-4:] != ".mp3" {
+			continue
+		}
+		file, err := os.Open("audio/" + entry.Name())
 		if err != nil {
 			log.Panicf("Error opening file %s: %v", entry.Name(), err)
 		}
-		decodedFile, err := mp3.NewDecoder(playFile)
+		decodedFile, err := mp3.NewDecoder(file)
 		if err != nil {
 			log.Panicf("Error decoding file %s: %v", entry.Name(), err)
 		}
-		if s.content[entry.Name()], err = io.ReadAll(decodedFile); err != nil {
+		if s.content[strings.Replace(en, ".mp3", "", 1)], err = io.ReadAll(decodedFile); err != nil {
 			log.Panicf("Error reading decodedFile %s: %v", entry.Name(), err)
 		}
 	}
