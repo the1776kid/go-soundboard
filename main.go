@@ -18,19 +18,21 @@ var (
 	content    map[string][]byte
 )
 
+// TODO : embed system icon
+
 func play(input []byte) {
 	ap := otoContext.NewPlayer()
 	if _, err := ap.Write(input); err != nil {
 		log.Panicf("failed writing to player: %v", err)
 	}
 	if err := ap.Close(); err != nil {
-		log.Panicf("failed to clone player: %v", err)
+		log.Panicf("failed to close player: %v", err)
 	}
 }
 
 func gui() {
 	a := app.New()
-	w := a.NewWindow("soundboard")
+	w := a.NewWindow("go-soundboard")
 	ng := container.NewGridWithColumns(func() int {
 		var col int
 		c := len(content)
@@ -60,6 +62,7 @@ func gui() {
 }
 
 func main() {
+	// TODO : handle multiple sample rates, or change SR in program
 	var otoErr error
 	otoContext, otoErr = oto.NewContext(48000, 2, 2, 256)
 	if otoErr != nil {
