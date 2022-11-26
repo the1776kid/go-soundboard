@@ -31,15 +31,31 @@ func play(input []byte) {
 func gui() {
 	a := app.New()
 	w := a.NewWindow("soundboard")
-	vb := container.NewVBox()
+	ng := container.NewGridWithColumns(func() int {
+		var col int
+		c := len(content)
+		ipc := 10 // items per column
+		for {
+			if c > ipc {
+				col++
+				c = c - ipc
+				continue
+			}
+			if c < ipc && c > 0 {
+				col++
+				break
+			}
+		}
+		return col
+	}())
 	for index, bytes := range content {
 		sl := index
 		nb := bytes
-		vb.Add(widget.NewButton(sl, func() {
+		ng.Add(widget.NewButton(sl, func() {
 			go play(nb)
 		}))
 	}
-	w.SetContent(vb)
+	w.SetContent(ng)
 	w.ShowAndRun()
 }
 
