@@ -81,16 +81,16 @@ func main() {
 		if en[len(en)-4:] != ".mp3" {
 			continue
 		}
-		file, err := os.Open("audio/" + entry.Name())
+		file, err := os.Open(path + en)
 		if err != nil {
-			log.Panicf("Error opening file %s: %v", entry.Name(), err)
+			log.Panicf("Error opening file %s: %v", en, err)
 		}
 		decodedFile, err := mp3.NewDecoder(file)
 		if err != nil {
-			log.Panicf("Error decoding file %s: %v", entry.Name(), err)
+			log.Panicf("Error decoding file %s: %v", en, err)
 		}
 		if content[strings.Replace(en, ".mp3", "", 1)], err = io.ReadAll(decodedFile); err != nil {
-			log.Panicf("Error reading decodedFile %s: %v", entry.Name(), err)
+			log.Panicf("Error reading decodedFile %s: %v", en, err)
 		}
 	}
 	gui()
