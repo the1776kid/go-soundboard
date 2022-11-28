@@ -10,6 +10,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"sort"
 	"strings"
 )
 
@@ -17,8 +18,6 @@ var (
 	otoContext *oto.Context
 	content    map[string][]byte
 )
-
-// TODO : embed system icon
 
 func play(input []byte) {
 	ap := otoContext.NewPlayer()
@@ -50,9 +49,14 @@ func gui() {
 		}
 		return col
 	}())
-	for index, bytes := range content {
-		sl := index
-		nb := bytes
+	keys := make([]string, 0, len(content))
+	for k := range content {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	for _, k := range keys {
+		sl := k
+		nb := content[k]
 		ng.Add(widget.NewButton(sl, func() {
 			go play(nb)
 		}))
@@ -62,7 +66,6 @@ func gui() {
 }
 
 func main() {
-	// TODO : handle multiple sample rates, or change SR in program
 	var otoErr error
 	otoContext, otoErr = oto.NewContext(48000, 2, 2, 256)
 	if otoErr != nil {
