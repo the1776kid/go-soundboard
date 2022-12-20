@@ -34,8 +34,11 @@ func gui() {
 	w := a.NewWindow("go-soundboard")
 	ng := container.NewGridWithColumns(func() int {
 		var col int
-		c := len(content)
 		ipc := 10 // items per column
+		c := len(content)
+		if c%ipc == 0 {
+			return c / ipc
+		}
 		for {
 			if c > ipc {
 				col++
@@ -67,7 +70,7 @@ func gui() {
 
 func main() {
 	var otoErr error
-	otoContext, otoErr = oto.NewContext(48000, 2, 2, 256)
+	otoContext, otoErr = oto.NewContext(48000, 2, 2, 1024)
 	if otoErr != nil {
 		log.Panicf("Error creating oto.NewContext %v", otoErr)
 	}
