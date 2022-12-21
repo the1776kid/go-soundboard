@@ -17,6 +17,7 @@ import (
 var (
 	otoContext *oto.Context
 	content    map[string][]byte
+	ipc        = 10 // items per column
 )
 
 func play(input []byte) {
@@ -34,7 +35,6 @@ func gui() {
 	w := a.NewWindow("go-soundboard")
 	ng := container.NewGridWithColumns(func() int {
 		var col int
-		ipc := 10 // items per column
 		c := len(content)
 		if c%ipc == 0 {
 			return c / ipc
