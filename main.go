@@ -1,7 +1,9 @@
 package main
 
 import (
+	_ "embed"
 	"flag"
+	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
@@ -13,6 +15,9 @@ import (
 	"sort"
 	"strings"
 )
+
+//go:embed sb.ico
+var icon []byte
 
 var (
 	otoContext *oto.Context
@@ -33,6 +38,7 @@ func play(input []byte) {
 func gui() {
 	a := app.New()
 	w := a.NewWindow("go-soundboard")
+	w.SetIcon(fyne.NewStaticResource("", icon))
 	ng := container.NewGridWithColumns(func() int {
 		var col int
 		c := len(content)

@@ -1,9 +1,9 @@
 # Go-Soundboard
 
 ---
-current only supports 48khz mp3 files
+* only supports 48khz mp3 files
 
----
+
 ### cmd
 ```shell
 go-soundboard -d <Path to Audio files>
